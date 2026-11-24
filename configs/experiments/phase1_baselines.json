@@ -1,0 +1,26 @@
+{
+  "phase": 1,
+  "name": "phase1_baselines",
+  "seed": 42,
+  "resolution": [1920, 1080],
+  "runs": 5,
+  "warmup_frames": 120,
+  "measured_frames": 1000,
+  "camera_path": "configs/camera_paths/hallway_flythrough_v1.json",
+  "asset_pack": "results/assets_cache/pbr_ntc_pack_v1.bin",
+  "asset_manifest": "results/assets_cache/manifest.json",
+  "material_count": 32,
+  "virtual_texture_size": 8192,
+  "mip_levels": 11,
+  "streamed_mip_count": 6,
+  "tile_size_bytes": 65536,
+  "bcn_tile_cache_mib": 1536,
+  "max_tile_triplets_per_frame": 48,
+  "baselines": [
+    "B0_BCn_Full",
+    "B1_SFS_BCn",
+    "B2_NTC_OnSample",
+    "B3_NTC_OnFeedback"
+  ],
+  "reference_config": "B0_BCn_Full"
+}

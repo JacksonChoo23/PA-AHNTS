@@ -1,0 +1,44 @@
+{
+  "name": "hallway_flythrough_v1",
+  "description": "Deterministic 16-bay Grand PBR Architectural Gallery traversal covering slow inspection, brisk lateral pan, and fast corridor traverse.",
+  "gallery": {
+    "num_bays": 16,
+    "bay_length_m": 10.0,
+    "width_m": 8.0,
+    "height_m": 6.0,
+    "num_materials": 32
+  },
+  "warmup_frames": 120,
+  "measured_frames": 1000,
+  "fov_y_deg": 65.0,
+  "near_z": 0.1,
+  "far_z": 220.0,
+  "quality_checkpoints": [
+    {"id": "ckpt_00", "frame_idx": 50},
+    {"id": "ckpt_01", "frame_idx": 250},
+    {"id": "ckpt_02", "frame_idx": 500},
+    {"id": "ckpt_03", "frame_idx": 750},
+    {"id": "ckpt_04", "frame_idx": 950}
+  ],
+  "warmup_orbit": {
+    "center": [0.0, 2.2, 5.0],
+    "radius_x": 1.2,
+    "radius_z": 2.0,
+    "look_ahead_z": 18.0,
+    "yaw_osc_deg": 25.0
+  },
+  "keyframes": [
+    {"t": 0.00, "pos": [ 0.0, 2.0,   2.0], "look": [ 0.0, 2.2,  16.0]},
+    {"t": 0.08, "pos": [-2.1, 1.8,  10.0], "look": [-3.8, 2.3,  12.5]},
+    {"t": 0.16, "pos": [ 2.1, 2.1,  22.0], "look": [ 3.8, 2.0,  26.0]},
+    {"t": 0.25, "pos": [ 0.0, 2.4,  38.0], "look": [-1.5, 2.5,  55.0]},
+    {"t": 0.35, "pos": [-1.8, 1.9,  52.0], "look": [ 3.5, 2.1,  56.0]},
+    {"t": 0.45, "pos": [ 1.6, 2.5,  68.0], "look": [-3.4, 2.2,  73.0]},
+    {"t": 0.55, "pos": [ 0.0, 2.0,  86.0], "look": [ 0.0, 2.2, 108.0]},
+    {"t": 0.65, "pos": [-2.2, 1.7, 102.0], "look": [-3.9, 2.4, 105.0]},
+    {"t": 0.75, "pos": [ 2.2, 2.0, 118.0], "look": [ 3.9, 2.1, 122.0]},
+    {"t": 0.85, "pos": [-0.5, 2.3, 134.0], "look": [ 2.8, 2.0, 144.0]},
+    {"t": 0.94, "pos": [ 0.8, 2.1, 148.0], "look": [-1.2, 2.3, 158.0]},
+    {"t": 1.00, "pos": [ 0.0, 2.2, 154.0], "look": [ 0.0, 2.2, 140.0]}
+  ]
+}

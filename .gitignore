@@ -1,0 +1,35 @@
+# Build artifacts
+build/
+out/
+cmake-build-*/
+*.exe
+*.dll
+*.pdb
+*.ilk
+*.obj
+*.o
+*.a
+*.lib
+
+# Experiment outputs (raw telemetry, plots, captures)
+results/
+
+# Python environments & caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+
+# IDE / Editor
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Third-party SDKs (keep .gitkeep and licenses/READMEs only)
+third_party/*
+!third_party/.gitkeep
+!third_party/*/LICENSE*
+!third_party/*/README*

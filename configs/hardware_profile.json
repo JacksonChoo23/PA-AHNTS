@@ -1,0 +1,381 @@
+{
+  "schema_version": "1.0",
+  "generated_at_utc": "2026-11-24T13:24:49+00:00",
+  "host": {
+    "hostname": "Jackson_laptop",
+    "python_version": "3.12.10",
+    "is_admin": false,
+    "os": {
+      "Caption": "Microsoft Windows 11 Pro",
+      "Version": "10.0.26300",
+      "BuildNumber": "26300",
+      "OSArchitecture": "64-bit"
+    },
+    "system": {
+      "Manufacturer": "LENOVO",
+      "Model": "83F3",
+      "TotalPhysicalMemory": 33752997888
+    },
+    "cpu": {
+      "Name": "Intel(R) Core(TM) Ultra 7 255HX",
+      "Manufacturer": "GenuineIntel",
+      "NumberOfCores": 20,
+      "NumberOfLogicalProcessors": 20,
+      "MaxClockSpeed": 2400
+    },
+    "ram": {
+      "total_bytes": 33752997888,
+      "total_gib": 31.43,
+      "available_bytes": 17882034176,
+      "available_gib": 16.65
+    }
+  },
+  "dxgi_d3d12": {
+    "dll_availability": {
+      "d3d12": true,
+      "dxgi": true,
+      "directml": true,
+      "dml_create_device_symbol": true,
+      "dxcore": true,
+      "dxcompiler": false,
+      "d3dcompiler_47": true,
+      "nvml": true
+    },
+    "adapters": [
+      {
+        "adapter_index": 0,
+        "description": "NVIDIA GeForce RTX 5060 Laptop GPU",
+        "vendor_id": "0x10DE",
+        "device_id": "0x2D59",
+        "subsys_id": "0x801517AA",
+        "revision": 161,
+        "is_software": false,
+        "dedicated_video_memory_bytes": 8282701824,
+        "dedicated_video_memory_mib": 7899.0,
+        "dedicated_system_memory_bytes": 0,
+        "shared_system_memory_bytes": 19239208796,
+        "shared_system_memory_mib": 18347.94,
+        "luid": "0x0:0x140B5",
+        "dxgi_local_memory": {
+          "queried": true,
+          "budget_bytes": 7477395456,
+          "current_usage_bytes": 0,
+          "available_for_reservation_bytes": 3872915456,
+          "current_reservation_bytes": 0,
+          "budget_mib": 7131.0
+        },
+        "dxgi_nonlocal_memory": {
+          "queried": true,
+          "budget_bytes": 18433902428,
+          "current_usage_bytes": 0,
+          "available_for_reservation_bytes": 9351168942,
+          "current_reservation_bytes": 0,
+          "budget_mib": 17579.94
+        },
+        "d3d12": {
+          "supported": true,
+          "hresult": "0x00000000",
+          "max_feature_level": "12_2",
+          "highest_shader_model": "6.8",
+          "tiled_resources_tier": 4,
+          "resource_binding_tier": 3,
+          "resource_heap_tier": 2,
+          "wave_ops": true,
+          "wave_lane_count_min": 32,
+          "wave_lane_count_max": 32,
+          "total_lane_count": 3328,
+          "copy_queue_timestamp_supported": true,
+          "native_16bit_shader_ops": true,
+          "mesh_shader_tier": 10,
+          "sampler_feedback_tier": 90,
+          "uma": false,
+          "cache_coherent_uma": false,
+          "direct_timestamp_ok": true,
+          "direct_timestamp_freq_hz": 1000000000,
+          "copy_timestamp_ok": true,
+          "copy_timestamp_freq_hz": 1000000000
+        },
+        "directml": {
+          "device_created": true,
+          "hresult": "0x00000000"
+        }
+      },
+      {
+        "adapter_index": 1,
+        "description": "Intel(R) Graphics",
+        "vendor_id": "0x8086",
+        "device_id": "0x7D67",
+        "subsys_id": "0x801517AA",
+        "revision": 6,
+        "is_software": false,
+        "dedicated_video_memory_bytes": 134217728,
+        "dedicated_video_memory_mib": 128.0,
+        "dedicated_system_memory_bytes": 0,
+        "shared_system_memory_bytes": 19239208796,
+        "shared_system_memory_mib": 18347.94,
+        "luid": "0x0:0x1739E",
+        "dxgi_local_memory": {
+          "queried": true,
+          "budget_bytes": 18433902428,
+          "current_usage_bytes": 0,
+          "available_for_reservation_bytes": 9351168942,
+          "current_reservation_bytes": 0,
+          "budget_mib": 17579.94
+        },
+        "dxgi_nonlocal_memory": {
+          "queried": true,
+          "budget_bytes": 0,
+          "current_usage_bytes": 0,
+          "available_for_reservation_bytes": 0,
+          "current_reservation_bytes": 0,
+          "budget_mib": 0.0
+        },
+        "d3d12": {
+          "supported": true,
+          "hresult": "0x00000000",
+          "max_feature_level": "12_2",
+          "highest_shader_model": "6.8",
+          "tiled_resources_tier": 4,
+          "resource_binding_tier": 3,
+          "resource_heap_tier": 2,
+          "wave_ops": true,
+          "wave_lane_count_min": 8,
+          "wave_lane_count_max": 32,
+          "total_lane_count": 2048,
+          "copy_queue_timestamp_supported": true,
+          "native_16bit_shader_ops": true,
+          "mesh_shader_tier": 10,
+          "sampler_feedback_tier": 90,
+          "uma": true,
+          "cache_coherent_uma": false,
+          "direct_timestamp_ok": true,
+          "direct_timestamp_freq_hz": 19200000,
+          "copy_timestamp_ok": true,
+          "copy_timestamp_freq_hz": 19200000
+        },
+        "directml": {
+          "device_created": true,
+          "hresult": "0x00000000"
+        }
+      },
+      {
+        "adapter_index": 2,
+        "description": "Microsoft Basic Render Driver",
+        "vendor_id": "0x1414",
+        "device_id": "0x8C",
+        "subsys_id": "0x0",
+        "revision": 0,
+        "is_software": true,
+        "dedicated_video_memory_bytes": 0,
+        "dedicated_video_memory_mib": 0.0,
+        "dedicated_system_memory_bytes": 0,
+        "shared_system_memory_bytes": 19239208796,
+        "shared_system_memory_mib": 18347.94,
+        "luid": "0x0:0x17325",
+        "dxgi_local_memory": {
+          "queried": true,
+          "budget_bytes": 18433902428,
+          "current_usage_bytes": 0,
+          "available_for_reservation_bytes": 9351168942,
+          "current_reservation_bytes": 0,
+          "budget_mib": 17579.94
+        },
+        "dxgi_nonlocal_memory": {
+          "queried": true,
+          "budget_bytes": 0,
+          "current_usage_bytes": 0,
+          "available_for_reservation_bytes": 0,
+          "current_reservation_bytes": 0,
+          "budget_mib": 0.0
+        },
+        "d3d12": {
+          "supported": true,
+          "hresult": "0x00000000",
+          "max_feature_level": "12_1",
+          "highest_shader_model": "6.8",
+          "tiled_resources_tier": 3,
+          "resource_binding_tier": 3,
+          "resource_heap_tier": 2,
+          "wave_ops": true,
+          "wave_lane_count_min": 4,
+          "wave_lane_count_max": 4,
+          "total_lane_count": 80,
+          "copy_queue_timestamp_supported": true,
+          "native_16bit_shader_ops": true,
+          "mesh_shader_tier": 10,
+          "sampler_feedback_tier": 100,
+          "uma": true,
+          "cache_coherent_uma": true,
+          "direct_timestamp_ok": true,
+          "direct_timestamp_freq_hz": 10000000,
+          "copy_timestamp_ok": true,
+          "copy_timestamp_freq_hz": 10000000
+        },
+        "directml": {
+          "device_created": true,
+          "hresult": "0x00000000"
+        }
+      }
+    ],
+    "binary_path": "build\\tools\\env_probe\\dxgi_dml_probe.exe"
+  },
+  "nvml": {
+    "available": true,
+    "devices": [
+      {
+        "index": 0,
+        "name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+        "cuda_compute_capability": "12.0",
+        "vram": {
+          "total_bytes": 8546942976,
+          "total_mib": 8151.0,
+          "used_mib": 2319.95,
+          "free_mib": 5831.05,
+          "is_8gb_vram_target": true
+        },
+        "pcie": {
+          "max_link_gen": 5,
+          "current_link_gen": 5,
+          "max_link_width": 16,
+          "current_link_width": 8
+        },
+        "power_w": 19.733,
+        "default_power_limit_w": 50.0,
+        "enforced_power_limit_w": 115.0,
+        "temperature_c": 51,
+        "clocks_mhz": {
+          "graphics": 1245,
+          "sm": 1245,
+          "memory": 12001
+        }
+      }
+    ],
+    "driver_version": "621.35",
+    "nvml_version": "13.621.35"
+  },
+  "pnp_accelerators": [
+    {
+      "class": "ComputeAccelerator",
+      "friendly_name": "Intel(R) AI Boost",
+      "status": "OK",
+      "manufacturer": "Intel Corporation",
+      "instance_id": "PCI\\VEN_8086&DEV_AD1D&SUBSYS_3D7317AA&REV_01\\3&11583659&1&58",
+      "driver_version": "32.0.100.4841",
+      "driver_date": "2026-07-24"
+    },
+    {
+      "class": "Display",
+      "friendly_name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+      "status": "OK",
+      "manufacturer": "NVIDIA",
+      "instance_id": "PCI\\VEN_10DE&DEV_2D59&SUBSYS_801517AA&REV_A1\\CE9F1C31592DB04800",
+      "driver_version": "32.0.16.2135",
+      "driver_date": "2026-11-19"
+    },
+    {
+      "class": "Display",
+      "friendly_name": "Intel(R) Graphics",
+      "status": "OK",
+      "manufacturer": "Intel Corporation",
+      "instance_id": "PCI\\VEN_8086&DEV_7D67&SUBSYS_801517AA&REV_06\\3&11583659&1&10",
+      "driver_version": "32.0.101.8860",
+      "driver_date": "2026-07-06"
+    }
+  ],
+  "power_and_pdh_telemetry": {
+    "pdh_open_ok": true,
+    "rapl_readable_without_admin": true,
+    "sample_readings_w": {
+      "cpu_pkg_power_w": 14.085,
+      "cpu_core_pp0_power_w": 6.85,
+      "igpu_pp1_power_w": 0.0,
+      "dram_power_w": 0.0
+    },
+    "counter_add_status": {
+      "cpu_pkg_power_w": "0x00000000",
+      "cpu_core_pp0_power_w": "0x00000000",
+      "igpu_pp1_power_w": "0x00000000",
+      "dram_power_w": "0x00000000"
+    },
+    "available_pdh_sets": {
+      "GPU Engine": true,
+      "GPU Process Memory": true,
+      "GPU Local Adapter Memory": true,
+      "Power Meter": true,
+      "Energy Meter": true,
+      "GPU Non Local Adapter Memory": true
+    }
+  },
+  "ml_runtimes_and_toolchain": {
+    "directml_system_dll": {
+      "product_version": "1.15.6+260914-0959.1.os-germanium.2f9444f",
+      "file_version": "1.15.6+260914-0959.1.os-germanium.2f9444f",
+      "exists": true
+    },
+    "python_packages": {
+      "torch": {
+        "installed": true,
+        "version": "2.9.1+cu130",
+        "cuda_available": true,
+        "cuda_version": "13.0"
+      },
+      "onnxruntime": {
+        "installed": false
+      },
+      "openvino": {
+        "installed": false
+      },
+      "flip_evaluator": {
+        "installed": true
+      }
+    },
+    "toolchain": {
+      "cmake": {
+        "installed": true,
+        "path": "C:\\Users\\oilwa\\AppData\\Local\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.MSVCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin\\cmake.EXE",
+        "version_line": "cmake version 4.4.4"
+      },
+      "ninja": {
+        "installed": true,
+        "path": "C:\\Users\\oilwa\\AppData\\Local\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.MSVCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin\\ninja.EXE",
+        "version_line": "1.13.2"
+      },
+      "g++": {
+        "installed": true,
+        "path": "C:\\Users\\oilwa\\AppData\\Local\\Microsoft\\WinGet\\Packages\\BrechtSanders.WinLibs.POSIX.MSVCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\\mingw64\\bin\\g++.EXE",
+        "version_line": "g++.EXE (MinGW-W64 x86_64-msvcrt-posix-seh, built by Brecht Sanders, r3) 16.2.0"
+      },
+      "cl_msvc": {
+        "installed": false,
+        "path": null
+      },
+      "vs_installation_path": null,
+      "dxc": {
+        "installed": true,
+        "path": "D:\\PA-AHNTS\\third_party\\dxc\\build\\native\\bin\\x64\\dxc.exe",
+        "version_line": "dxcompiler.dll: 1.9(5512-01b62ad4)(1.9.2609.5) - 1.9.2609.5 (01b62ad47)"
+      }
+    },
+    "third_party_sdks_present": {
+      "agility_sdk": true,
+      "dxc": true,
+      "rtxntc": false,
+      "rtxts": false,
+      "minidxnn": false,
+      "onnxruntime_native": false
+    }
+  },
+  "readiness_gate0": {
+    "gate0_passed": true,
+    "ready_components": [
+      "Target 8GB VRAM dGPU confirmed via NVML",
+      "DX12 Ultimate (FL 12_2, Tiled Resources, Sampler Feedback, Native FP16, DirectML) verified",
+      "Windows PDH RAPL Package/Core power counters readable without Admin elevation",
+      "NVML live dGPU power/clock/temperature telemetry verified"
+    ],
+    "missing_dependencies_for_later_phases": [
+      "MSVC (VS 2022 Build Tools cl.exe) \u2014 optional if using MinGW, recommended for Agility SDK / RTXNTC",
+      "onnxruntime-directml / openvino (required in Phase 3 for NPU/iGPU/CPU decode benchmarks)"
+    ]
+  }
+}
