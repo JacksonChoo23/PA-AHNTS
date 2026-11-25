@@ -1,0 +1,35 @@
+{
+  "phase": 3,
+  "name": "phase3_hetero_bench",
+  "seed": 42,
+  "hardware_profile": "configs/hardware_profile.json",
+  "asset_manifest": "results/assets_cache/manifest.json",
+  "asset_pack": "results/assets_cache/pbr_ntc_pack_v1.bin",
+  "camera_path": "configs/camera_paths/hallway_flythrough_v1.json",
+  "phase1_config": "configs/experiments/phase1_baselines.json",
+  "batch_sizes": [1, 4, 16, 64, 256],
+  "hidden_dims": [16, 32, 64],
+  "default_hidden_dim": 32,
+  "tile_dim": 256,
+  "runs": 5,
+  "warmup_iters": 5,
+  "measure_iters": 20,
+  "pcie_transfer_bytes_per_tile": {
+    "latent_g0_g1": 73728,
+    "bcn_3maps": 196608,
+    "raw_8ch_u8": 524288
+  },
+  "pcie_theoretical_gbps": {
+    "Gen3x4": 3.5,
+    "Gen4x8": 13.5,
+    "Gen5x8": 25.0
+  },
+  "contention_stage_seconds": {
+    "Idle": 3.0,
+    "dGPU_Solo": 8.0,
+    "dGPU_plus_NPU": 6.0,
+    "dGPU_plus_iGPU": 6.0,
+    "dGPU_plus_CPU": 6.0,
+    "dGPU_Cooldown": 5.0
+  }
+}

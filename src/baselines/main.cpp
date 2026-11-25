@@ -1,6 +1,7 @@
 #include "../core/dx12_context.h"
 #include "../core/json_lite.h"
 #include "../core/scene_geometry.h"
+#include "../ram_tier/phase2_reinforced.h"
 #include "../ram_tier/ram_tiered_pool.h"
 #include "../telemetry/telemetry_logger.h"
 #include "baseline_runner.h"
@@ -66,6 +67,48 @@ int main(int argc, char** argv) {
 
         pahnts::TelemetryLogger logger;
         logger.init(&ctx);
+
+        if (phase == 21) {
+            pahnts::Phase2ReinforcedConfig rcfg;
+            if (config_name.find("C0_") == 0) rcfg.mode = pahnts::P2RMode::C0_VRAM_Sync;
+            else if (config_name.find("C1_") == 0) rcfg.mode = pahnts::P2RMode::C1_RAM_Sync;
+            else if (config_name.find("C2_") == 0) rcfg.mode = pahnts::P2RMode::C2_VRAM_Async;
+            else if (config_name.find("B1_") == 0) rcfg.mode = pahnts::P2RMode::B1_SFS_BCn_Async_RamCache;
+            else rcfg.mode = pahnts::P2RMode::C3_RAM_Async;
+
+            rcfg.config_name = config_name;
+            rcfg.run_id = run_id;
+            rcfg.width = width;
+            rcfg.height = height;
+            rcfg.warmup_frames = warmup_override >= 0 ? warmup_override : exp_cfg["warmup_frames"].as_int(120);
+            rcfg.measured_frames = measured_override >= 0 ? measured_override : exp_cfg["measured_frames"].as_int(1000);
+            rcfg.bcn_tile_cache_mib = static_cast<uint32_t>(exp_cfg["bcn_tile_cache_mib"].as_int(1536));
+            rcfg.max_tile_triplets_per_frame = static_cast<uint32_t>(exp_cfg["max_tile_triplets_per_frame"].as_int(48));
+            rcfg.l1_latent_pool_mib = l1_mib_override >= 0 ? static_cast<uint32_t>(l1_mib_override) : 512u;
+            rcfg.ram_l2_pool_mib = ram_l2_mib_override >= 0 ? static_cast<uint32_t>(ram_l2_mib_override) : 512u;
+            rcfg.capture_checkpoints = capture_only;
+            rcfg.streamed_checkpoints = true;
+            rcfg.manifest_path = exp_cfg["asset_manifest"].as_string();
+            rcfg.shader_dir = shader_dir;
+            rcfg.capture_dir = out_dir + "/captures";
+            rcfg.out_dir = out_dir;
+
+            std::cout << "[pa_ahnts_bench] Phase 2 Reinforced | " << rcfg.config_name
+                      << " | run_id=" << rcfg.run_id
+                      << " | L1_MiB=" << rcfg.l1_latent_pool_mib
+                      << " | RAM_L2_MiB=" << rcfg.ram_l2_pool_mib
+                      << (rcfg.capture_checkpoints ? " | STREAMED_CHECKPOINTS" : "")
+                      << std::endl;
+            try {
+                pahnts::Phase2ReinforcedRunner runner;
+                runner.run(ctx, scene, logger, rcfg);
+            } catch (...) {
+                ctx.dump_debug_messages();
+                throw;
+            }
+            std::cout << "[pa_ahnts_bench] Completed " << rcfg.config_name << " (run " << rcfg.run_id << ")" << std::endl;
+            return 0;
+        }
 
         if (phase == 2) {
             pahnts::RamTierConfig rcfg;

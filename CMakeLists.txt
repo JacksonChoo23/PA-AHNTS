@@ -24,6 +24,7 @@ add_executable(pa_ahnts_bench
     src/baselines/material_pack.cpp
     src/baselines/baseline_runner.cpp
     src/ram_tier/ram_tiered_pool.cpp
+    src/ram_tier/phase2_reinforced.cpp
     src/baselines/main.cpp
 )
 
@@ -58,4 +59,47 @@ add_custom_command(TARGET pa_ahnts_bench POST_BUILD
     COMMAND "${DXC_EXE}" -T ps_6_6 -E main -HV 2021 -O3 -enable-16bit-types -Fo "${SHADER_OUT_DIR}/pbr_ntc_sample.ps.cso" "${SHADER_SRC_DIR}/pbr_ntc_sample.ps.hlsl"
     COMMAND "${DXC_EXE}" -T cs_6_6 -E main -HV 2021 -O3 -enable-16bit-types -Fo "${SHADER_OUT_DIR}/ntc_decode_bcn.cs.cso" "${SHADER_SRC_DIR}/ntc_decode_bcn.cs.hlsl"
     COMMENT "Copying Agility SDK DLLs and compiling SM 6.6 HLSL shaders"
+)
+
+add_executable(dx12_decode_bench
+    src/core/dx12_context.cpp
+    src/baselines/material_pack.cpp
+    src/hetero_bench/dx12_decode_bench.cpp
+)
+
+target_link_libraries(dx12_decode_bench PRIVATE
+    d3d12
+    dxgi
+    dxguid
+    uuid
+    ole32
+    gdi32
+    user32
+    pdh
+)
+
+if(NOT MSVC)
+    target_link_options(dx12_decode_bench PRIVATE -Wl,--export-all-symbols)
+endif()
+
+add_library(pahnts_host_gather SHARED
+    src/hetero_bench/host_gather_opt.cpp
+)
+if(MSVC)
+    target_compile_options(pahnts_host_gather PRIVATE /O2 /arch:AVX2)
+else()
+    target_compile_options(pahnts_host_gather PRIVATE -O3 -mavx2 -mfma -mf16c)
+    target_link_options(pahnts_host_gather PRIVATE -static -static-libgcc -static-libstdc++)
+endif()
+set_target_properties(pahnts_host_gather PROPERTIES PREFIX "")
+
+set(HETERO_SHADER_DIR "${CMAKE_SOURCE_DIR}/src/hetero_bench/shaders")
+add_custom_command(TARGET dx12_decode_bench POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${SHADER_OUT_DIR}"
+    COMMAND "${DXC_EXE}" -T cs_6_6 -E main -HV 2021 -O3 -enable-16bit-types -DHIDDEN_DIM=16u -DOUTPUT_BCN=1u -Fo "${SHADER_OUT_DIR}/ntc_h16_bcn.cs.cso" "${HETERO_SHADER_DIR}/ntc_bench_decode.cs.hlsl"
+    COMMAND "${DXC_EXE}" -T cs_6_6 -E main -HV 2021 -O3 -enable-16bit-types -DHIDDEN_DIM=32u -DOUTPUT_BCN=1u -Fo "${SHADER_OUT_DIR}/ntc_h32_bcn.cs.cso" "${HETERO_SHADER_DIR}/ntc_bench_decode.cs.hlsl"
+    COMMAND "${DXC_EXE}" -T cs_6_6 -E main -HV 2021 -O3 -enable-16bit-types -DHIDDEN_DIM=64u -DOUTPUT_BCN=1u -Fo "${SHADER_OUT_DIR}/ntc_h64_bcn.cs.cso" "${HETERO_SHADER_DIR}/ntc_bench_decode.cs.hlsl"
+    COMMAND "${DXC_EXE}" -T cs_6_6 -E main -HV 2021 -O3 -enable-16bit-types -DHIDDEN_DIM=32u -DOUTPUT_BCN=0u -Fo "${SHADER_OUT_DIR}/ntc_h32_raw.cs.cso" "${HETERO_SHADER_DIR}/ntc_bench_decode.cs.hlsl"
+    COMMAND "${DXC_EXE}" -T cs_6_6 -E main -HV 2021 -O3 -Fo "${SHADER_OUT_DIR}/bcn_pack_only.cs.cso" "${HETERO_SHADER_DIR}/bcn_pack_only.cs.hlsl"
+    COMMENT "Compiling Phase 3 heterogeneous compute shaders"
 )

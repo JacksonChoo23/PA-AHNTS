@@ -213,8 +213,8 @@ def plot_phase2(p1_dir: Path, p2_dir: Path) -> list[Path]:
     ax.set_xticklabels(labels)
     ax.set_ylabel("Memory Footprint (GiB)")
     ax.set_title("Phase 2 Gate 2: Local VRAM Savings & RAM L2 Residency Across VRAM Caps (N=5)")
-    ax.set_ylim(0, 9.0)
-    ax.legend(fontsize=8.5, loc="center right")
+    ax.set_ylim(0, 9.2)
+    ax.legend(fontsize=8.5, loc="upper left", bbox_to_anchor=(0.01, 0.87), ncol=2, frameon=True)
     p_vram = save_both(fig, plots_dir, "phase2_vram_savings_curve")
 
     # 2. PCIe Latency Histogram + CDF + Bandwidth vs Payload
@@ -306,15 +306,278 @@ def plot_phase2(p1_dir: Path, p2_dir: Path) -> list[Path]:
     return out
 
 
+def plot_phase3(p3_dir: Path) -> list[Path]:
+    matrix_csv = p3_dir / "hetero_benchmark_matrix.csv"
+    xfer_csv = p3_dir / "transfer_cost_matrix.csv"
+    cont_csv = p3_dir / "power_contention_trace.csv"
+    quant_csv = p3_dir / "quantization_quality.csv"
+    be_json_p = p3_dir / "break_even_analysis.json"
+    if not matrix_csv.exists():
+        print(f"[plot] Skipping Phase 3 (missing {matrix_csv})")
+        return []
+
+    plots_dir = p3_dir / "plots"
+    mdf = pd.read_csv(matrix_csv)
+    be = json.loads(be_json_p.read_text(encoding="utf-8")) if be_json_p.exists() else {}
+
+    # 1. Throughput & Latency Curves + Hidden-Dim Sensitivity (3 panels)
+    fig, axes = plt.subplots(1, 3, figsize=(16.5, 5.2))
+    h32 = mdf[mdf["hidden_dim"] == 32]
+    agg = (
+        h32.groupby(["backend", "batch_tiles"], as_index=False)
+        .agg(infer_ms=("infer_only_ms", "mean"), mtex=("mtexels_per_sec", "mean"), mtex_std=("mtexels_per_sec", "std"))
+    )
+
+    bk_styles = {
+        "dGPU_DX12_Compute_FP16_BCn": ("dGPU DX12 FP16 (+BCn)", "#1F77B4", "o", "-"),
+        "dGPU_DX12_Compute_FP16_Raw": ("dGPU DX12 FP16 (Raw)", "#17BECF", "s", "--"),
+        "dGPU_ORT_DML_FP16": ("dGPU DirectML FP16", "#2CA02C", "^", ":"),
+        "iGPU_OpenVINO_FP16": ("iGPU OpenVINO FP16", "#FF7F0E", "D", "-"),
+        "iGPU_OpenVINO_INT8": ("iGPU OpenVINO INT8", "#BCBD22", "v", "--"),
+        "iGPU_ORT_DML_FP16": ("iGPU DirectML FP16", "#8C564B", "P", "-."),
+        "NPU_OpenVINO_INT8": ("NPU OpenVINO INT8", "#D62728", "*", "-"),
+        "NPU_OpenVINO_FP16": ("NPU OpenVINO FP16", "#E377C2", "X", "--"),
+        "CPU_OpenVINO_INT8": ("CPU OpenVINO INT8", "#7F7F7F", "d", "-"),
+        "CPU_ORT_INT8": ("CPU ORT INT8", "#9467BD", "<", ":"),
+    }
+
+    for bk, (lbl, col, mk, ls) in bk_styles.items():
+        sub = agg[agg["backend"] == bk].sort_values("batch_tiles")
+        if sub.empty:
+            continue
+        axes[0].plot(sub["batch_tiles"], sub["mtex"], marker=mk, linestyle=ls, color=col, linewidth=1.8, markersize=6, label=lbl)
+        axes[1].plot(sub["batch_tiles"], sub["infer_ms"], marker=mk, linestyle=ls, color=col, linewidth=1.8, markersize=6, label=lbl)
+
+    axes[0].set_xscale("log", base=2)
+    axes[0].set_yscale("log")
+    axes[0].set_xticks([1, 4, 16, 64, 256])
+    axes[0].set_xticklabels(["1", "4", "16", "64", "256"])
+    axes[0].set_xlabel("Batch Size (256x256 Tiles)")
+    axes[0].set_ylabel("Decode Throughput (Mtexels/s)")
+    axes[0].set_title("(a) Decode Throughput Scaling (H=32)")
+    axes[0].grid(True, which="both", alpha=0.3)
+
+    axes[1].set_xscale("log", base=2)
+    axes[1].set_yscale("log")
+    axes[1].set_xticks([1, 4, 16, 64, 256])
+    axes[1].set_xticklabels(["1", "4", "16", "64", "256"])
+    axes[1].axhline(16.67, color="red", linestyle="--", linewidth=1.1, label="60 FPS Frame Budget (16.7 ms)")
+    axes[1].axhline(5.0, color="gray", linestyle=":", linewidth=1.1, label="5 ms Prefetch Window")
+    axes[1].set_xlabel("Batch Size (256x256 Tiles)")
+    axes[1].set_ylabel("Infer Latency (ms)")
+    axes[1].set_title("(b) Standalone Inference Latency")
+    axes[1].grid(True, which="both", alpha=0.3)
+    axes[1].legend(fontsize=7.3, loc="upper left", ncol=1)
+
+    # Panel (c): Hidden-dim H=16, 32, 64 at B=16
+    b16 = mdf[mdf["batch_tiles"] == 16].groupby(["backend", "hidden_dim"], as_index=False)["mtexels_per_sec"].mean()
+    h_bks = [b for b in ["dGPU_DX12_Compute_FP16_BCn", "iGPU_ORT_DML_FP16", "iGPU_OpenVINO_FP16", "NPU_OpenVINO_INT8", "CPU_OpenVINO_INT8"] if b in b16["backend"].values]
+    dims = [16, 32, 64]
+    hx = np.arange(len(dims))
+    bw = 0.16
+    for idx, bk in enumerate(h_bks):
+        vals = [float(b16[(b16["backend"] == bk) & (b16["hidden_dim"] == h)]["mtexels_per_sec"].mean() or 0.0) for h in dims]
+        lbl, col, _, _ = bk_styles.get(bk, (bk, "#333333", "o", "-"))
+        axes[2].bar(hx + (idx - (len(h_bks) - 1) / 2.0) * bw, vals, width=bw, color=col, label=lbl, edgecolor="black", linewidth=0.5)
+    axes[2].set_yscale("log")
+    axes[2].set_xticks(hx)
+    axes[2].set_xticklabels([f"H={h}" for h in dims])
+    axes[2].set_ylabel("Throughput (Mtexels/s, log)")
+    axes[2].set_title("(c) MLP Hidden Dim Scaling (B=16 Tiles)")
+    axes[2].legend(fontsize=7.3, loc="upper right")
+
+    fig.suptitle("PA-AHNTS Phase 3: Heterogeneous NTC Decode Scaling (dGPU vs iGPU vs NPU vs CPU)",
+                 fontsize=13, fontweight="bold")
+    fig.tight_layout()
+    p_curves = save_both(fig, plots_dir, "phase3_throughput_latency_curves")
+
+    # 2. Transfer Cost vs Compute Breakdown
+    p_xfer = None
+    if xfer_csv.exists():
+        xdf = pd.read_csv(xfer_csv)
+        fig, axes = plt.subplots(1, 2, figsize=(13.5, 5.2))
+
+        sel_batches = [b for b in [4, 16, 64] if b in xdf["batch_tiles"].values]
+        if not sel_batches:
+            sel_batches = sorted(xdf["batch_tiles"].unique())[:3]
+        labels_bar, comp_gather, comp_infer, comp_pcie, comp_pack = [], [], [], [], []
+        b16_sub = mdf[(mdf["hidden_dim"] == 32)].groupby(["backend", "batch_tiles"], as_index=False)["infer_only_ms"].mean()
+
+        for b in sel_batches:
+            row = xdf[xdf["batch_tiles"] == b].iloc[0]
+            labels_bar.append(f"B={b}\ndGPU\n72KB")
+            comp_gather.append(0.0)
+            comp_infer.append(float(row["dgpu_mlp_bcn_ms"]))
+            comp_pcie.append(float(row["latent_72kb_copy_ms"]))
+            comp_pack.append(0.0)
+
+            labels_bar.append(f"B={b}\nNPU\n512KB")
+            comp_gather.append(float(row["host_gather_ms"]))
+            comp_infer.append(float(row["npu_int8_infer_ms"]))
+            comp_pcie.append(float(row["host_512kb_raw_copy_ms"]))
+            comp_pack.append(float(row["dgpu_bcn_pack_ms"]))
+
+            igpu_dml = b16_sub[(b16_sub["backend"] == "iGPU_ORT_DML_FP16") & (b16_sub["batch_tiles"] == b)]["infer_only_ms"]
+            igpu_ms = float(igpu_dml.mean()) if not igpu_dml.empty else float(row["igpu_fp16_infer_ms"])
+            labels_bar.append(f"B={b}\niGPU\n512KB")
+            comp_gather.append(float(row["host_gather_ms"]))
+            comp_infer.append(igpu_ms)
+            comp_pcie.append(float(row["host_512kb_raw_copy_ms"]))
+            comp_pack.append(float(row["dgpu_bcn_pack_ms"]))
+
+        bx = np.arange(len(labels_bar))
+        g_arr = np.array(comp_gather)
+        i_arr = np.array(comp_infer)
+        p_arr = np.array(comp_pcie)
+        k_arr = np.array(comp_pack)
+        axes[0].bar(bx, g_arr, color="#8C564B", label="Host Feature Gather", edgecolor="black", linewidth=0.4)
+        axes[0].bar(bx, i_arr, bottom=g_arr, color="#4C72B0", label="MLP Infer", edgecolor="black", linewidth=0.4)
+        axes[0].bar(bx, p_arr, bottom=g_arr + i_arr, color="#DD8452", label="PCIe DMA Upload", edgecolor="black", linewidth=0.4)
+        axes[0].bar(bx, k_arr, bottom=g_arr + i_arr + p_arr, color="#55A868", label="dGPU BCn Pack", edgecolor="black", linewidth=0.4)
+        tot = g_arr + i_arr + p_arr + k_arr
+        for idx, tv in enumerate(tot):
+            axes[0].text(idx, tv * 1.04 + 0.05, f"{tv:.2f} ms", ha="center", va="bottom", fontsize=7.5, rotation=25)
+        axes[0].set_xticks(bx)
+        axes[0].set_xticklabels(labels_bar, fontsize=7.8)
+        axes[0].set_ylabel("End-to-End Batch Latency (ms)")
+        axes[0].set_title("(a) End-to-End Pipeline Breakdown: Latent vs Pre-Decoded")
+        axes[0].set_ylim(0, max(tot) * 1.22 if len(tot) else 10.0)
+        axes[0].legend(fontsize=8)
+
+        # Panel (b): PCIe bandwidth across payload sizes
+        axes[1].plot(xdf["batch_tiles"], xdf["pcie_bw_72kb_gbps"], "o-", color="#4C72B0", label="72 KB/tile (Latents G0+G1)")
+        axes[1].plot(xdf["batch_tiles"], xdf["pcie_bw_192kb_gbps"], "s-", color="#55A868", label="192 KB/tile (Pre-packed BC7/BC5)")
+        axes[1].plot(xdf["batch_tiles"], xdf["pcie_bw_512kb_gbps"], "^-", color="#C44E52", label="512 KB/tile (Raw 8-ch PBR)")
+        axes[1].set_xscale("log", base=2)
+        axes[1].set_xticks(xdf["batch_tiles"].tolist())
+        axes[1].set_xticklabels([str(v) for v in xdf["batch_tiles"].tolist()])
+        axes[1].set_xlabel("Batch Size (Tiles)")
+        axes[1].set_ylabel("Measured Copy Queue PCIe Bandwidth (GB/s)")
+        axes[1].set_title("(b) DX12 Copy Queue PCIe Gen5 x8 Effective Bandwidth")
+        axes[1].legend(fontsize=8.5)
+
+        fig.tight_layout()
+        p_xfer = save_both(fig, plots_dir, "phase3_transfer_vs_compute_breakdown")
+
+    # 3. Power Contention & Dynamic Boost Clock Drop
+    p_cont = None
+    if cont_csv.exists():
+        cdf = pd.read_csv(cont_csv)
+        cdf["time_s"] = cdf["timestamp_ms"] / 1000.0
+        fig, axes = plt.subplots(2, 1, figsize=(13.5, 7.6), sharex=True)
+
+        stage_colors = {
+            "Idle": "#E8E8E8",
+            "dGPU_Solo": "#D6EAF8",
+            "dGPU_plus_NPU": "#FADBD8",
+            "dGPU_plus_iGPU": "#FCF3CF",
+            "dGPU_plus_CPU": "#E8DAEF",
+            "dGPU_Cooldown": "#D5F5E3",
+        }
+        # Shade contiguous stage intervals
+        cdf["grp"] = (cdf["stage"] != cdf["stage"].shift()).cumsum()
+        for _, g in cdf.groupby("grp"):
+            st = g["stage"].iloc[0]
+            t0, t1 = g["time_s"].iloc[0], g["time_s"].iloc[-1]
+            col = stage_colors.get(st, "#F0F0F0")
+            for ax in axes:
+                ax.axvspan(t0, t1, color=col, alpha=0.55, zorder=0)
+
+        axes[0].plot(cdf["time_s"], cdf["dgpu_power_w"], color="#C44E52", linewidth=1.6, label="dGPU Power (NVML, W)")
+        axes[0].plot(cdf["time_s"], cdf["cpu_pkg_power_w"], color="#4C72B0", linewidth=1.6, label="CPU/SoC Pkg Power (RAPL PKG, W)")
+        axes[0].plot(cdf["time_s"], cdf["total_est_power_w"], color="#222222", linewidth=1.8, linestyle="--", label="Total Package Power (W)")
+        axes[0].set_ylabel("Power (W)")
+        axes[0].set_ylim(0, max(145.0, float(cdf["total_est_power_w"].max()) * 1.24))
+        for _, g in cdf.groupby("grp"):
+            st = g["stage"].iloc[0]
+            t0, t1 = g["time_s"].iloc[0], g["time_s"].iloc[-1]
+            axes[0].text((t0 + t1) * 0.5, axes[0].get_ylim()[1] * 0.97, st.replace("_", "\n"),
+                         ha="center", va="top", fontsize=8, fontweight="bold")
+        axes[0].set_title("(a) Dynamic Boost Power Sharing: Sustained dGPU Load + Concurrent NPU / iGPU / CPU")
+        axes[0].legend(fontsize=8.5, loc="lower left")
+
+        ax2 = axes[1].twinx()
+        l1 = axes[1].plot(cdf["time_s"], cdf["dgpu_sm_clock_mhz"], color="#DD8452", linewidth=1.6, label="dGPU SM Clock (MHz)")
+        l2 = ax2.plot(cdf["time_s"], cdf["dgpu_tiles_per_sec"] / 1000.0, color="#55A868", linewidth=1.4, alpha=0.85, label="dGPU Throughput (kTiles/s)")
+        axes[1].set_xlabel("Elapsed Time (seconds)")
+        axes[1].set_ylabel("dGPU SM Clock (MHz)", color="#DD8452")
+        ax2.set_ylabel("dGPU Compute Throughput (kTiles/s)", color="#55A868")
+        axes[1].set_title("(b) dGPU Frequency & Throughput Contention Impact")
+        lines = l1 + l2
+        axes[1].legend(lines, [l.get_label() for l in lines], fontsize=8.5, loc="lower left")
+
+        fig.tight_layout()
+        p_cont = save_both(fig, plots_dir, "phase3_power_contention_dynamic_boost")
+
+    # 4. Break-Even Heatmap & Quantization Loss (INT8 vs FP16)
+    fig, axes = plt.subplots(1, 2, figsize=(13.8, 5.4))
+    grid = be.get("breakeven_grid_b16", [])
+    if grid:
+        gdf = pd.DataFrame(grid)
+        piv = gdf.pivot(index="npu_peak_tops", columns="dgpu_queue_delay_ms", values="net_gain_ms")
+        piv = piv.sort_index(ascending=False)
+        sns.heatmap(
+            piv, ax=axes[0], cmap="RdYlGn", center=0.0, annot=True, fmt=".2f",
+            cbar_kws={"label": "Net Offload Latency Gain (ms): dGPU - NPU"},
+            annot_kws={"fontsize": 7.8},
+        )
+        axes[0].set_xlabel("dGPU Congestion / Queue Delay (ms)")
+        axes[0].set_ylabel("NPU Effective Decode Speed (TOPS)")
+        axes[0].set_title("(a) Phase 3 Offload Break-Even Boundary (B=16 Tiles, Gen5 x8)")
+
+    if quant_csv.exists():
+        qdf = pd.read_csv(quant_csv)
+        mat_q = qdf[qdf["eval_scope"] == "material_texture_512"]
+        ck_q = qdf[qdf["eval_scope"] == "dx12_rendered_1080p"]
+        ax_q = axes[1]
+        if not mat_q.empty:
+            x = np.arange(len(mat_q))
+            ax_q.plot(x, mat_q["psnr_albedo_int8_vs_fp16_db"], "o-", markersize=4, linewidth=1.2,
+                      color="#4C72B0", label=f"32 Mats Albedo PSNR (mean={mat_q['psnr_albedo_int8_vs_fp16_db'].mean():.1f} dB)")
+            ax_q.plot(x, mat_q["psnr_8ch_int8_vs_fp16_db"], "s--", markersize=3.5, linewidth=1.1,
+                      color="#55A868", label=f"32 Mats 8-ch PSNR (mean={mat_q['psnr_8ch_int8_vs_fp16_db'].mean():.1f} dB)")
+            if not ck_q.empty:
+                ck_mean = float(ck_q["psnr_8ch_int8_vs_fp16_db"].mean())
+                ax_q.axhline(ck_mean, color="#C44E52", linestyle="-.", linewidth=1.5,
+                             label=f"1080p DX12 Rendered Mean PSNR ({ck_mean:.1f} dB)")
+            ax2_q = ax_q.twinx()
+            ax2_q.bar(x, mat_q["flip_albedo_mean_int8_vs_fp16"], alpha=0.35, color="#DD8452", label="Material FLIP Mean")
+            ax2_q.set_ylabel("NVIDIA FLIP Mean Error (lower=better)", color="#DD8452")
+            ax2_q.set_ylim(0, max(0.06, float(mat_q["flip_albedo_mean_int8_vs_fp16"].max()) * 2.2))
+            ax_q.set_xlabel("Material ID (0..31)")
+            ax_q.set_ylabel("PSNR (NPU INT8 vs FP16, dB)")
+            ax_q.set_title("(b) Intel AI Boost NPU INT8 Quantization Fidelity")
+            ax_q.legend(fontsize=7.8, loc="lower left")
+
+    fig.tight_layout()
+    p_be = save_both(fig, plots_dir, "phase3_breakeven_and_quantization")
+
+    out = [p_curves, p_be]
+    if p_xfer is not None:
+        out.append(p_xfer)
+    if p_cont is not None:
+        out.append(p_cont)
+    return out
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate Phase 1 & Phase 2 plots from raw CSVs")
+    parser = argparse.ArgumentParser(description="Generate Phase 1-3 plots from raw CSVs")
+    parser.add_argument("--phase", type=str, default="all", help="Phase to plot: 1, 2, 3, or all")
     parser.add_argument("--artifact-dir", type=str, default=None, help="Optional directory to copy PNGs")
     args = parser.parse_args()
 
     p1_dir = REPO_ROOT / "results" / "phase1"
     p2_dir = REPO_ROOT / "results" / "phase2"
+    p3_dir = REPO_ROOT / "results" / "phase3"
 
-    generated = plot_phase1(p1_dir) + plot_phase2(p1_dir, p2_dir)
+    generated: list[Path] = []
+    if args.phase in ("1", "all"):
+        generated.extend(plot_phase1(p1_dir))
+    if args.phase in ("2", "all"):
+        generated.extend(plot_phase2(p1_dir, p2_dir))
+    if args.phase in ("3", "all"):
+        generated.extend(plot_phase3(p3_dir))
+
     if args.artifact_dir and generated:
         ad = Path(args.artifact_dir)
         ad.mkdir(parents=True, exist_ok=True)

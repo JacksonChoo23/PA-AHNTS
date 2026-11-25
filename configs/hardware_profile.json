@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at_utc": "2026-11-24T13:24:49+00:00",
+  "generated_at_utc": "2026-11-24T14:24:39+00:00",
   "host": {
     "hostname": "Jackson_laptop",
     "python_version": "3.12.10",
@@ -26,8 +26,8 @@
     "ram": {
       "total_bytes": 33752997888,
       "total_gib": 31.43,
-      "available_bytes": 17882034176,
-      "available_gib": 16.65
+      "available_bytes": 17785888768,
+      "available_gib": 16.56
     }
   },
   "dxgi_d3d12": {
@@ -229,8 +229,8 @@
         "vram": {
           "total_bytes": 8546942976,
           "total_mib": 8151.0,
-          "used_mib": 2319.95,
-          "free_mib": 5831.05,
+          "used_mib": 2222.95,
+          "free_mib": 5928.05,
           "is_8gb_vram_target": true
         },
         "pcie": {
@@ -239,14 +239,14 @@
           "max_link_width": 16,
           "current_link_width": 8
         },
-        "power_w": 19.733,
+        "power_w": 55.998,
         "default_power_limit_w": 50.0,
         "enforced_power_limit_w": 115.0,
-        "temperature_c": 51,
+        "temperature_c": 64,
         "clocks_mhz": {
-          "graphics": 1245,
-          "sm": 1245,
-          "memory": 12001
+          "graphics": 1800,
+          "sm": 1800,
+          "memory": 9001
         }
       }
     ],
@@ -286,8 +286,8 @@
     "pdh_open_ok": true,
     "rapl_readable_without_admin": true,
     "sample_readings_w": {
-      "cpu_pkg_power_w": 14.085,
-      "cpu_core_pp0_power_w": 6.85,
+      "cpu_pkg_power_w": 12.64,
+      "cpu_core_pp0_power_w": 5.957,
       "igpu_pp1_power_w": 0.0,
       "dram_power_w": 0.0
     },
@@ -320,10 +320,22 @@
         "cuda_version": "13.0"
       },
       "onnxruntime": {
-        "installed": false
+        "installed": true,
+        "version": "1.24.4",
+        "available_providers": [
+          "DmlExecutionProvider",
+          "CPUExecutionProvider"
+        ]
       },
       "openvino": {
-        "installed": false
+        "installed": true,
+        "version": "2026.4.1-22982-e213a147257-releases/2026/4",
+        "available_devices": [
+          "CPU",
+          "GPU.0",
+          "GPU.1",
+          "NPU"
+        ]
       },
       "flip_evaluator": {
         "installed": true
@@ -374,8 +386,7 @@
       "NVML live dGPU power/clock/temperature telemetry verified"
     ],
     "missing_dependencies_for_later_phases": [
-      "MSVC (VS 2022 Build Tools cl.exe) \u2014 optional if using MinGW, recommended for Agility SDK / RTXNTC",
-      "onnxruntime-directml / openvino (required in Phase 3 for NPU/iGPU/CPU decode benchmarks)"
+      "MSVC (VS 2022 Build Tools cl.exe) \u2014 optional if using MinGW, recommended for Agility SDK / RTXNTC"
     ]
   }
 }

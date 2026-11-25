@@ -1,0 +1,427 @@
+{
+  "schema_version": "1.0-phase3-reinforced",
+  "hardware": {
+    "dgpu_name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+    "igpu_name": "Intel(R) Graphics",
+    "npu_name": "Intel(R) AI Boost",
+    "cpu_name": "Intel(R) Core(TM) Ultra 7 255HX",
+    "dgpu_dml_device_id": 0,
+    "igpu_dml_device_id": 1,
+    "ov_available_devices": [
+      "CPU",
+      "GPU.0",
+      "GPU.1",
+      "NPU"
+    ],
+    "ov_device_names": {
+      "CPU": "Intel(R) Core(TM) Ultra 7 255HX",
+      "GPU.0": "Intel(R) Graphics (iGPU)",
+      "GPU.1": "NVIDIA GeForce RTX 5060 Laptop GPU (dGPU)",
+      "NPU": "Intel(R) AI Boost"
+    },
+    "ov_igpu_device": "GPU.0",
+    "ov_npu_device": "NPU",
+    "ort_providers": [
+      "DmlExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "pcie_link": {
+      "max_link_gen": 5,
+      "current_link_gen": 5,
+      "max_link_width": 16,
+      "current_link_width": 8
+    }
+  },
+  "mlp_h32_ops": {
+    "macs_per_texel": 1792,
+    "ops_per_texel": 3584,
+    "b16_total_gop": 3.758096384
+  },
+  "dgpu_queue_congestion_model": {
+    "intercept_ms": 0.36799,
+    "slope_per_bg_ms": 0.99636
+  },
+  "backends": {
+    "dGPU_DX12_Compute_FP16_BCn": {
+      "precision": "FP16",
+      "infer_p50_ms_model": {
+        "intercept_ms": 1.87603,
+        "slope_ms_per_tile": 0.19657
+      },
+      "infer_p99_ms_model": {
+        "intercept_ms": 1.4707,
+        "slope_ms_per_tile": 0.23115
+      },
+      "infer_mean_ms_model": {
+        "intercept_ms": 1.68531,
+        "slope_ms_per_tile": 0.20403
+      },
+      "host_gather_ms_model": {
+        "intercept_ms": 0.0,
+        "slope_ms_per_tile": 0.0
+      },
+      "pcie_upload_ms_model": {
+        "intercept_ms": 0.00188,
+        "slope_ms_per_tile": 0.00268
+      },
+      "bcn_pack_ms_model": {
+        "intercept_ms": 0.0,
+        "slope_ms_per_tile": 0.0
+      },
+      "observed_batches": {
+        "1": {
+          "p50_ms": 0.73611,
+          "p99_ms": 1.09348,
+          "mean_ms": 0.72544
+        },
+        "4": {
+          "p50_ms": 1.8022,
+          "p99_ms": 1.91172,
+          "mean_ms": 1.82115
+        },
+        "16": {
+          "p50_ms": 5.10026,
+          "p99_ms": 5.43239,
+          "mean_ms": 5.08214
+        },
+        "64": {
+          "p50_ms": 17.26175,
+          "p99_ms": 17.37767,
+          "mean_ms": 17.01674
+        },
+        "256": {
+          "p50_ms": 51.51101,
+          "p99_ms": 60.35955,
+          "mean_ms": 53.35638
+        }
+      },
+      "energy_per_tile": {
+        "incremental_mj_per_tile": 13.76647,
+        "package_mj_per_tile": 20.71535
+      },
+      "concurrent_dgpu_throughput_delta_pct": 0.0,
+      "concurrent_dgpu_delta_cpu_pinned_isolated_pct": null,
+      "memory_cost": {
+        "vram_bytes_per_tile_working": 196608,
+        "host_gather_ram_mib": 0.0
+      },
+      "visual_error_vs_fp16": {
+        "material_albedo_psnr_db": 99.0,
+        "material_albedo_flip": 0.0,
+        "rendered_1080p_psnr_db": 99.0,
+        "rendered_1080p_flip": 0.0
+      }
+    },
+    "NPU_OpenVINO_INT8": {
+      "precision": "INT8",
+      "infer_p50_ms_model": {
+        "intercept_ms": 5.73592,
+        "slope_ms_per_tile": 2.73785
+      },
+      "infer_p99_ms_model": {
+        "intercept_ms": 8.6243,
+        "slope_ms_per_tile": 2.81255
+      },
+      "infer_mean_ms_model": {
+        "intercept_ms": 6.3702,
+        "slope_ms_per_tile": 2.68702
+      },
+      "host_gather_ms_model": {
+        "intercept_ms": 0.30053,
+        "slope_ms_per_tile": 0.13432
+      },
+      "pcie_upload_ms_model": {
+        "intercept_ms": 0.00076,
+        "slope_ms_per_tile": 0.01831
+      },
+      "bcn_pack_ms_model": {
+        "intercept_ms": -0.01427,
+        "slope_ms_per_tile": 0.00281
+      },
+      "observed_batches": {
+        "1": {
+          "p50_ms": 3.8948,
+          "p99_ms": 4.41268,
+          "mean_ms": 3.89311
+        },
+        "4": {
+          "p50_ms": 13.8172,
+          "p99_ms": 15.53631,
+          "mean_ms": 13.67805
+        },
+        "16": {
+          "p50_ms": 54.06045,
+          "p99_ms": 57.51176,
+          "mean_ms": 53.53121
+        },
+        "64": {
+          "p50_ms": 185.1582,
+          "p99_ms": 198.79243,
+          "mean_ms": 184.50239
+        },
+        "256": {
+          "p50_ms": 705.3561,
+          "p99_ms": 725.94943,
+          "mean_ms": 692.51958
+        }
+      },
+      "energy_per_tile": {
+        "incremental_mj_per_tile": 21.98293,
+        "package_mj_per_tile": 132.80415
+      },
+      "concurrent_dgpu_throughput_delta_pct": -0.26,
+      "concurrent_dgpu_delta_cpu_pinned_isolated_pct": null,
+      "memory_cost": {
+        "vram_bytes_per_tile_working": 524288,
+        "host_gather_ram_mib": 387.0
+      },
+      "visual_error_vs_fp16": {
+        "material_albedo_psnr_db": 51.79,
+        "material_albedo_flip": 0.020468,
+        "rendered_1080p_psnr_db": 48.469,
+        "rendered_1080p_flip": 0.018709
+      }
+    },
+    "iGPU_ORT_DML_FP16": {
+      "precision": "FP16",
+      "infer_p50_ms_model": {
+        "intercept_ms": -0.26026,
+        "slope_ms_per_tile": 1.44206
+      },
+      "infer_p99_ms_model": {
+        "intercept_ms": 3.6656,
+        "slope_ms_per_tile": 1.5025
+      },
+      "infer_mean_ms_model": {
+        "intercept_ms": 0.21596,
+        "slope_ms_per_tile": 1.41612
+      },
+      "host_gather_ms_model": {
+        "intercept_ms": 0.43932,
+        "slope_ms_per_tile": 0.08892
+      },
+      "pcie_upload_ms_model": {
+        "intercept_ms": 0.00076,
+        "slope_ms_per_tile": 0.01831
+      },
+      "bcn_pack_ms_model": {
+        "intercept_ms": -0.01427,
+        "slope_ms_per_tile": 0.00281
+      },
+      "observed_batches": {
+        "1": {
+          "p50_ms": 1.83285,
+          "p99_ms": 2.3533,
+          "mean_ms": 1.87506
+        },
+        "4": {
+          "p50_ms": 6.9473,
+          "p99_ms": 9.48584,
+          "mean_ms": 7.08443
+        },
+        "16": {
+          "p50_ms": 25.06425,
+          "p99_ms": 34.44777,
+          "mean_ms": 25.58398
+        },
+        "64": {
+          "p50_ms": 86.46305,
+          "p99_ms": 95.38549,
+          "mean_ms": 85.55698
+        },
+        "256": {
+          "p50_ms": 370.1325,
+          "p99_ms": 389.00857,
+          "mean_ms": 363.87592
+        }
+      },
+      "energy_per_tile": {
+        "incremental_mj_per_tile": 15.85656,
+        "package_mj_per_tile": 65.00834
+      },
+      "concurrent_dgpu_throughput_delta_pct": -0.27,
+      "concurrent_dgpu_delta_cpu_pinned_isolated_pct": null,
+      "memory_cost": {
+        "vram_bytes_per_tile_working": 524288,
+        "host_gather_ram_mib": 387.0
+      },
+      "visual_error_vs_fp16": {
+        "material_albedo_psnr_db": 99.0,
+        "material_albedo_flip": 0.0,
+        "rendered_1080p_psnr_db": 99.0,
+        "rendered_1080p_flip": 0.0
+      }
+    },
+    "iGPU_OpenVINO_FP16": {
+      "precision": "FP16",
+      "infer_p50_ms_model": {
+        "intercept_ms": 77.29231,
+        "slope_ms_per_tile": 5.66227
+      },
+      "infer_p99_ms_model": {
+        "intercept_ms": 107.81944,
+        "slope_ms_per_tile": 7.95184
+      },
+      "infer_mean_ms_model": {
+        "intercept_ms": 74.90745,
+        "slope_ms_per_tile": 5.78238
+      },
+      "host_gather_ms_model": {
+        "intercept_ms": 0.43932,
+        "slope_ms_per_tile": 0.08892
+      },
+      "pcie_upload_ms_model": {
+        "intercept_ms": 0.00076,
+        "slope_ms_per_tile": 0.01831
+      },
+      "bcn_pack_ms_model": {
+        "intercept_ms": -0.01427,
+        "slope_ms_per_tile": 0.00281
+      },
+      "observed_batches": {
+        "1": {
+          "p50_ms": 6.6931,
+          "p99_ms": 11.82991,
+          "mean_ms": 6.96375
+        },
+        "4": {
+          "p50_ms": 24.09325,
+          "p99_ms": 31.48163,
+          "mean_ms": 24.55124
+        },
+        "16": {
+          "p50_ms": 93.967,
+          "p99_ms": 167.87671,
+          "mean_ms": 95.00747
+        },
+        "64": {
+          "p50_ms": 732.91495,
+          "p99_ms": 980.69027,
+          "mean_ms": 729.86968
+        },
+        "256": {
+          "p50_ms": 1459.62685,
+          "p99_ms": 2058.79682,
+          "mean_ms": 1489.93623
+        }
+      },
+      "energy_per_tile": {
+        "incremental_mj_per_tile": 15.85656,
+        "package_mj_per_tile": 65.00834
+      },
+      "concurrent_dgpu_throughput_delta_pct": -0.27,
+      "concurrent_dgpu_delta_cpu_pinned_isolated_pct": null,
+      "memory_cost": {
+        "vram_bytes_per_tile_working": 524288,
+        "host_gather_ram_mib": 387.0
+      },
+      "visual_error_vs_fp16": {
+        "material_albedo_psnr_db": 99.0,
+        "material_albedo_flip": 0.0,
+        "rendered_1080p_psnr_db": 99.0,
+        "rendered_1080p_flip": 0.0
+      }
+    },
+    "CPU_OpenVINO_INT8": {
+      "precision": "INT8",
+      "infer_p50_ms_model": {
+        "intercept_ms": -2.36563,
+        "slope_ms_per_tile": 2.16937
+      },
+      "infer_p99_ms_model": {
+        "intercept_ms": -2.67113,
+        "slope_ms_per_tile": 2.47447
+      },
+      "infer_mean_ms_model": {
+        "intercept_ms": -1.94968,
+        "slope_ms_per_tile": 2.16056
+      },
+      "host_gather_ms_model": {
+        "intercept_ms": 0.30053,
+        "slope_ms_per_tile": 0.13432
+      },
+      "pcie_upload_ms_model": {
+        "intercept_ms": 0.00076,
+        "slope_ms_per_tile": 0.01831
+      },
+      "bcn_pack_ms_model": {
+        "intercept_ms": -0.01427,
+        "slope_ms_per_tile": 0.00281
+      },
+      "observed_batches": {
+        "1": {
+          "p50_ms": 2.9262,
+          "p99_ms": 3.50958,
+          "mean_ms": 2.93374
+        },
+        "4": {
+          "p50_ms": 9.40725,
+          "p99_ms": 11.71516,
+          "mean_ms": 9.39878
+        },
+        "16": {
+          "p50_ms": 33.92885,
+          "p99_ms": 39.50279,
+          "mean_ms": 33.95457
+        },
+        "64": {
+          "p50_ms": 126.28315,
+          "p99_ms": 141.65309,
+          "mean_ms": 127.48867
+        },
+        "256": {
+          "p50_ms": 555.37985,
+          "p99_ms": 634.05628,
+          "mean_ms": 553.22616
+        }
+      },
+      "energy_per_tile": {
+        "incremental_mj_per_tile": 33.07907,
+        "package_mj_per_tile": 107.06427
+      },
+      "concurrent_dgpu_throughput_delta_pct": -0.72,
+      "concurrent_dgpu_delta_cpu_pinned_isolated_pct": 2.2,
+      "memory_cost": {
+        "vram_bytes_per_tile_working": 524288,
+        "host_gather_ram_mib": 387.0
+      },
+      "visual_error_vs_fp16": {
+        "material_albedo_psnr_db": 51.79,
+        "material_albedo_flip": 0.020468,
+        "rendered_1080p_psnr_db": 48.469,
+        "rendered_1080p_flip": 0.018709
+      }
+    }
+  },
+  "breakeven_b16_post_opt": {
+    "batch_tiles": 16,
+    "dgpu_uncontended_complete_ms": 5.1566,
+    "t_latent_upload_ms": 0.0445,
+    "t_dgpu_infer_bcn_ms": 5.0821,
+    "t_raw_upload_ms": 0.2936,
+    "t_dgpu_bcn_pack_ms": 0.0229,
+    "gather_orig_python_ms": 21.6825,
+    "gather_opt_cpp_fp16_ms": 1.7698,
+    "gather_opt_cpp_fp32_ms": 2.0639,
+    "npu_pre_opt_serial_ms": 75.5602,
+    "npu_post_opt_serial_ms": 55.9415,
+    "npu_post_opt_overlapped_stage_ms": 53.5612,
+    "npu_breakeven_qdelay_pre_opt_ms": 70.4036,
+    "npu_breakeven_qdelay_post_opt_serial_ms": 50.7849,
+    "npu_breakeven_qdelay_post_opt_overlapped_ms": 48.4046,
+    "igpu_pre_opt_serial_ms": 47.613,
+    "igpu_post_opt_serial_ms": 27.7003,
+    "igpu_post_opt_overlapped_stage_ms": 25.614,
+    "igpu_breakeven_qdelay_pre_opt_ms": 42.4563,
+    "igpu_breakeven_qdelay_post_opt_serial_ms": 22.5437,
+    "igpu_breakeven_qdelay_post_opt_overlapped_ms": 20.4574,
+    "cpu_post_opt_serial_ms": 36.3649,
+    "cpu_breakeven_qdelay_post_opt_serial_ms": 31.2083
+  },
+  "validation_summary": {
+    "num_heldout_points": 17,
+    "mape_pct": 23.98,
+    "mae_ms": 21.008,
+    "r2": 0.93745
+  }
+}

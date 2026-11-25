@@ -348,6 +348,25 @@ def run_phase2(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_phase3(args: argparse.Namespace) -> int:
+    ensure_phase1_assets_and_binary(force_rebuild=args.rebuild)
+    if args.rebuild or not (BUILD_DIR / "dx12_decode_bench.exe").exists():
+        run_cmd(["cmake", "--build", str(BUILD_DIR), "--target", "dx12_decode_bench"])
+
+    cmd = [sys.executable, "src/hetero_bench/run_hetero_bench.py"]
+    if args.smoke:
+        cmd.append("--smoke")
+    if args.runs is not None:
+        cmd.extend(["--runs", str(args.runs)])
+    run_cmd(cmd)
+
+    if not args.smoke:
+        plot_script = REPO_ROOT / "scripts" / "analysis" / "plot_telemetry.py"
+        if plot_script.exists():
+            run_cmd([sys.executable, str(plot_script), "--phase", "3"])
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="PA-AHNTS Phase Runner")
     parser.add_argument("--phase", type=int, default=1, help="Phase index (1..6)")
@@ -360,6 +379,8 @@ def main() -> int:
         return run_phase1(args)
     if args.phase == 2:
         return run_phase2(args)
+    if args.phase == 3:
+        return run_phase3(args)
     raise ValueError(f"Unsupported phase: {args.phase}")
 
 
